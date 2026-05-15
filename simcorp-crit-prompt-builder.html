@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SimCorp · CRIT™ Prompt Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --simcorp-navy:   #003087;
+      --simcorp-mid:    #1A4BAD;
+      --simcorp-light:  #E8EDF7;
+      --simcorp-accent: #0066CC;
+      --bg:             #F6F8FC;
+      --surface:        #FFFFFF;
+      --surface-2:      #F0F3F9;
+      --text-primary:   #0D1B2E;
+      --text-secondary: #4A5568;
+      --text-muted:     #8899AA;
+      --border:         rgba(0,48,135,0.12);
+      --border-strong:  rgba(0,48,135,0.25);
+      --radius-sm:      6px;
+      --radius-md:      10px;
+      --radius-lg:      16px;
+      --shadow-sm:      0 1px 3px rgba(0,48,135,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:      0 4px 16px rgba(0,48,135,0.10), 0 1px 4px rgba(0,0,0,0.06);
+      --shadow-lg:      0 8px 32px rgba(0,48,135,0.14), 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOP NAV ── */
+    .topnav {
+      background: var(--simcorp-navy);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      height: 56px;
+      gap: 16px;
+    }
+    .topnav-logo {
+      font-family: 'Sora', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+    .topnav-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(255,255,255,0.25);
+    }
+    .topnav-sub {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.02em;
+    }
+    .topnav-pill {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* ── HERO BAND ── */
+    .hero {
+      background: linear-gradient(135deg, #001F5C 0%, #003087 50%, #0A52B5 100%);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 0.75rem;
+    }
+    .hero-title {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+    .hero-title span {
+      color: #7EB8FF;
+    }
+    .hero-desc {
+      font-size: 15px;
+      color: rgba(255,255,255,0.65);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── FRAMEWORK PILLS ── */
+    .framework-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .fw-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      transition: all 0.15s;
+    }
+    .fw-pill.active {
+      background: var(--simcorp-light);
+      border-color: var(--simcorp-navy);
+      color: var(--simcorp-navy);
+    }
+    .fw-pill.done {
+      background: var(--simcorp-light);
+      border-color: rgba(0,48,135,0.3);
+      color: var(--simcorp-mid);
+    }
+    .fw-letter {
+      font-family: 'Sora', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--border);
+      color: var(--text-secondary);
+    }
+    .fw-pill.active .fw-letter {
+      background: var(--simcorp-navy);
+      color: #fff;
+    }
+    .fw-pill.done .fw-letter {
+      background: var(--simcorp-mid);
+      color: #fff;
+    }
+    .fw-pill-connector {
+      color: var(--border-strong);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 640px;
+      padding: 2.25rem 2.5rem;
+    }
+
+    /* ── STEP PANELS ── */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    .step-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--simcorp-accent);
+      margin-bottom: 0.5rem;
+    }
+    .step-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+    .step-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+    .example-box {
+      background: var(--surface-2);
+      border-left: 3px solid var(--simcorp-navy);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 0.875rem 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .example-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--simcorp-navy);
+      margin-bottom: 4px;
+    }
+    .example-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      resize: vertical;
+      font-family: 'Inter', sans-serif;
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--text-primary);
+      background: var(--surface);
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 0.875rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    textarea::placeholder { color: var(--text-muted); }
+    textarea:focus {
+      border-color: var(--simcorp-navy);
+      box-shadow: 0 0 0 3px rgba(0,48,135,0.1);
+    }
+
+    .nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+      gap: 12px;
+    }
+    .btn-back {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: none;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 10px 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-back:hover {
+      background: var(--surface-2);
+      color: var(--text-primary);
+    }
+    .btn-next {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--simcorp-navy);
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 11px 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 2px 8px rgba(0,48,135,0.25);
+    }
+    .btn-next:hover {
+      background: var(--simcorp-mid);
+      box-shadow: 0 4px 12px rgba(0,48,135,0.3);
+    }
+    .btn-next:active { transform: scale(0.98); }
+
+    /* ── RESULT ── */
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+    .result-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--simcorp-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .result-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--simcorp-navy);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .result-title-block {}
+    .result-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .result-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .prompt-box {
+      background: #F8FAFF;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+    .prompt-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--simcorp-navy);
+      margin-top: 1.1em;
+      margin-bottom: 0.2em;
+      display: block;
+    }
+    .prompt-section-label:first-child { margin-top: 0; }
+    .prompt-section-text {
+      color: var(--text-primary);
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn-copy {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--simcorp-navy);
+      background: var(--simcorp-light);
+      border: 1px solid rgba(0,48,135,0.2);
+      border-radius: var(--radius-md);
+      padding: 9px 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: background 0.15s;
+    }
+    .btn-copy:hover { background: #d0dcf0; }
+    .btn-copy.copied {
+      background: #E6F4EF;
+      border-color: rgba(0,110,80,0.25);
+      color: #0a6e4a;
+    }
+    .btn-restart {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 9px 18px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-restart:hover { background: var(--surface-2); }
+
+    .tips-block {
+      margin-top: 1.75rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.25rem;
+    }
+    .tips-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .tip-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 0.6rem;
+    }
+    .tip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--simcorp-navy);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+    .tip-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ── FOOTER FRAMEWORK BAR ── */
+    .bottom-framework {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+    }
+    .bottom-framework-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+    .bfw-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.875rem 1rem;
+    }
+    .bfw-letter {
+      font-family: 'Sora', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--simcorp-navy);
+      margin-bottom: 2px;
+    }
+    .bfw-word {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+    .bfw-desc {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--simcorp-navy);
+      padding: 1rem 2rem;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+    }
+    footer span { color: rgba(255,255,255,0.6); }
+
+    /* Scrollbar */
+    .prompt-box::-webkit-scrollbar { width: 6px; }
+    .prompt-box::-webkit-scrollbar-track { background: transparent; }
+    .prompt-box::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+    @media (max-width: 600px) {
+      .card { padding: 1.5rem 1.25rem; }
+      .hero { padding: 2rem 1.25rem; }
+      .topnav { padding: 0 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav" aria-label="Site navigation">
+  <span class="topnav-logo">SimCorp</span>
+  <div class="topnav-divider"></div>
+  <span class="topnav-sub">AI Leadership Workshop</span>
+  <span class="topnav-pill">CRIT™ Tool</span>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">Workshop Resource · Thinking with AI as a Leader</div>
+  <h1 class="hero-title">Build Your <span>CRIT™</span> Prompt</h1>
+  <p class="hero-desc">Answer 4 questions. Get a structured AI prompt that actually works — built on the framework from today's session.</p>
+</header>
+
+<!-- FRAMEWORK BAR -->
+<div class="framework-bar" id="framework-bar" role="navigation" aria-label="Steps">
+  <div class="fw-pill active" id="pill-0">
+    <span class="fw-letter">C</span>
+    <span>Context</span>
+  </div>
+  <span class="fw-pill-connector">›</span>
+  <div class="fw-pill" id="pill-1">
+    <span class="fw-letter">R</span>
+    <span>Role</span>
+  </div>
+  <span class="fw-pill-connector">›</span>
+  <div class="fw-pill" id="pill-2">
+    <span class="fw-letter">I</span>
+    <span>Interview</span>
+  </div>
+  <span class="fw-pill-connector">›</span>
+  <div class="fw-pill" id="pill-3">
+    <span class="fw-letter">T</span>
+    <span>Task</span>
+  </div>
+  <span class="fw-pill-connector">›</span>
+  <div class="fw-pill" id="pill-4">
+    <span class="fw-letter">✦</span>
+    <span>Prompt</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="card" role="main">
+
+    <!-- STEP 0: CONTEXT -->
+    <div class="step-panel active" id="panel-0">
+      <div class="step-eyebrow">Step 1 of 4 · C — Context</div>
+      <h2 class="step-title">What's the challenge you're facing?</h2>
+      <p class="step-desc">Be specific — include numbers, timelines, and what's at stake. The more concrete your context, the more useful your AI conversation will be.</p>
+      <div class="example-box">
+        <div class="example-label">SimCorp example</div>
+        <div class="example-text">"I'm leading a cross-functional team navigating a major platform transition. We have 6 months to migrate 40% of our client base. Retention risk is high, my team is stretched, and exec visibility is increasing."</div>
+      </div>
+      <textarea id="input-0" placeholder="Describe your situation with as much specificity as you can — numbers, timelines, what's at stake…" aria-label="Context input"></textarea>
+      <div class="nav-row">
+        <span></span>
+        <button class="btn-next" onclick="goNext(0)">
+          Next: Role
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 1: ROLE -->
+    <div class="step-panel" id="panel-1">
+      <div class="step-eyebrow">Step 2 of 4 · R — Role</div>
+      <h2 class="step-title">What expert should AI be?</h2>
+      <p class="step-desc">Define the persona you want AI to embody. The more specific the expertise — including industry, experience level, and perspective — the more targeted and useful the response.</p>
+      <div class="example-box">
+        <div class="example-label">SimCorp example</div>
+        <div class="example-text">"Act as a senior change management consultant with 20 years of experience leading complex technology transitions at financial services and fintech firms. You understand both the technical and people sides of large-scale migrations."</div>
+      </div>
+      <textarea id="input-1" placeholder="Describe the expert role you want AI to play…" aria-label="Role input"></textarea>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(1)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <button class="btn-next" onclick="goNext(1)">
+          Next: Interview
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: INTERVIEW -->
+    <div class="step-panel" id="panel-2">
+      <div class="step-eyebrow">Step 3 of 4 · I — Interview</div>
+      <h2 class="step-title">Tell AI to ask you first.</h2>
+      <p class="step-desc">This is what separates CRIT™ from generic prompts. Instructing AI to interview you — before it responds — ensures it gathers what it needs to actually help, rather than guessing. You can customise how many questions and what focus areas.</p>
+      <div class="example-box">
+        <div class="example-label">Recommended starting point</div>
+        <div class="example-text">"Before you respond, ask me up to 5 clarifying questions — one at a time — to understand my situation better. Focus on constraints, stakeholders, and what success looks like for me. Only after you've asked your questions should you provide recommendations."</div>
+      </div>
+      <textarea id="input-2" placeholder="Describe how you want AI to interview you — or paste the example above and customise it…" aria-label="Interview instruction input"></textarea>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(2)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <button class="btn-next" onclick="goNext(2)">
+          Next: Task
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: TASK -->
+    <div class="step-panel" id="panel-3">
+      <div class="step-eyebrow">Step 4 of 4 · T — Task</div>
+      <h2 class="step-title">What's the exact deliverable?</h2>
+      <p class="step-desc">Name the specific output you want — a plan, a prioritised list, a decision framework, a draft message. Vague tasks produce vague results. The more precise you are, the more useful the output.</p>
+      <div class="example-box">
+        <div class="example-label">SimCorp example</div>
+        <div class="example-text">"Give me a 90-day action plan with the 3–5 highest-leverage moves I should make, the risks I should watch for, and one question I should be asking myself that I'm probably not."</div>
+      </div>
+      <textarea id="input-3" placeholder="Describe the exact output you want AI to produce…" aria-label="Task input"></textarea>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(3)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <button class="btn-next" onclick="buildPrompt()">
+          Build my prompt ✦
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 4: RESULT -->
+    <div class="step-panel" id="panel-4">
+      <div class="result-header">
+        <div class="result-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="result-title-block">
+          <div class="result-title">Your CRIT™ Prompt</div>
+          <div class="result-subtitle">Copy and paste into Claude or any AI tool</div>
+        </div>
+      </div>
+      <div class="prompt-box" id="prompt-box" aria-label="Generated prompt"></div>
+      <div class="result-actions">
+        <button class="btn-copy" id="copy-btn" onclick="copyPrompt()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span id="copy-label">Copy prompt</span>
+        </button>
+        <button class="btn-restart" onclick="restart()">Start over</button>
+      </div>
+      <div class="tips-block">
+        <div class="tips-title">From the workshop — once you start the conversation</div>
+        <div class="tip-row"><div class="tip-dot"></div><div class="tip-text">Ask for sources when something sounds too confident</div></div>
+        <div class="tip-row"><div class="tip-dot"></div><div class="tip-text">Push back when something feels off — AI will engage productively</div></div>
+        <div class="tip-row"><div class="tip-dot"></div><div class="tip-text">Watch for the agreement trap: AI is trained to be encouraging. Ask it to challenge you specifically</div></div>
+        <div class="tip-row"><div class="tip-dot"></div><div class="tip-text">Redirect if the conversation drifts — say "let's refocus on…"</div></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- BOTTOM FRAMEWORK EXPLAINER -->
+<section class="bottom-framework" aria-label="CRIT framework explained">
+  <div class="bottom-framework-inner">
+    <div class="bfw-card">
+      <div class="bfw-letter">C</div>
+      <div class="bfw-word">Context</div>
+      <div class="bfw-desc">Numbers, stakes, timeline. Be messy — specificity beats polish every time.</div>
+    </div>
+    <div class="bfw-card">
+      <div class="bfw-letter">R</div>
+      <div class="bfw-word">Role</div>
+      <div class="bfw-desc">The expert persona. Specific expertise beats a generic "assistant" role.</div>
+    </div>
+    <div class="bfw-card">
+      <div class="bfw-letter">I</div>
+      <div class="bfw-word">Interview</div>
+      <div class="bfw-desc">Tell AI to ask before answering. Most prompts skip this — it's the biggest unlock.</div>
+    </div>
+    <div class="bfw-card">
+      <div class="bfw-letter">T</div>
+      <div class="bfw-word">Task</div>
+      <div class="bfw-desc">Name the exact deliverable: a plan, a draft, a decision, a list.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>SimCorp AI Leadership Workshop</span> · CRIT™ framework from The AI-Driven Leader · For internal use
+</footer>
+
+<script>
+  const labels = [
+    { letter: 'C', word: 'Context' },
+    { letter: 'R', word: 'Role' },
+    { letter: 'I', word: 'Interview' },
+    { letter: 'T', word: 'Task' },
+    { letter: '✦', word: 'Prompt' }
+  ];
+
+  function showStep(n) {
+    for (let i = 0; i <= 4; i++) {
+      const panel = document.getElementById('panel-' + i);
+      const pill  = document.getElementById('pill-' + i);
+      if (panel) panel.classList.remove('active');
+      if (pill) {
+        pill.classList.remove('active', 'done');
+        if (i < n) pill.classList.add('done');
+        else if (i === n) pill.classList.add('active');
+      }
+    }
+    document.getElementById('panel-' + n).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goNext(step) {
+    const val = document.getElementById('input-' + step).value.trim();
+    if (!val) {
+      const ta = document.getElementById('input-' + step);
+      ta.focus();
+      ta.style.borderColor = '#cc2200';
+      ta.style.boxShadow = '0 0 0 3px rgba(204,34,0,0.1)';
+      setTimeout(() => {
+        ta.style.borderColor = '';
+        ta.style.boxShadow = '';
+      }, 1800);
+      return;
+    }
+    showStep(step + 1);
+  }
+
+  function goBack(step) { showStep(step - 1); }
+
+  function buildPrompt() {
+    const val = document.getElementById('input-3').value.trim();
+    if (!val) {
+      const ta = document.getElementById('input-3');
+      ta.focus();
+      ta.style.borderColor = '#cc2200';
+      ta.style.boxShadow = '0 0 0 3px rgba(204,34,0,0.1)';
+      setTimeout(() => { ta.style.borderColor = ''; ta.style.boxShadow = ''; }, 1800);
+      return;
+    }
+    const c = document.getElementById('input-0').value.trim();
+    const r = document.getElementById('input-1').value.trim();
+    const iv = document.getElementById('input-2').value.trim();
+    const t = document.getElementById('input-3').value.trim();
+
+    const box = document.getElementById('prompt-box');
+    box.innerHTML = '';
+
+    function addSection(label, text) {
+      const lbl = document.createElement('span');
+      lbl.className = 'prompt-section-label';
+      lbl.textContent = label;
+      box.appendChild(lbl);
+      const txt = document.createElement('p');
+      txt.className = 'prompt-section-text';
+      txt.textContent = text;
+      box.appendChild(txt);
+    }
+
+    addSection('CONTEXT', c);
+    addSection('ROLE', r);
+    addSection('INTERVIEW', iv);
+    addSection('TASK', t);
+
+    showStep(4);
+  }
+
+  function copyPrompt() {
+    const c = document.getElementById('input-0').value.trim();
+    const r = document.getElementById('input-1').value.trim();
+    const iv = document.getElementById('input-2').value.trim();
+    const t = document.getElementById('input-3').value.trim();
+    const text = `CONTEXT\n${c}\n\nROLE\n${r}\n\nINTERVIEW\n${iv}\n\nTASK\n${t}`;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn');
+      const lbl = document.getElementById('copy-label');
+      btn.classList.add('copied');
+      lbl.textContent = '✓ Copied!';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        lbl.textContent = 'Copy prompt';
+      }, 2500);
+    });
+  }
+
+  function restart() {
+    ['input-0','input-1','input-2','input-3'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    showStep(0);
+  }
+</script>
+</body>
+</html>
